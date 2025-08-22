@@ -29,7 +29,7 @@ const CustomPieChart = ({data,colors}) => {
           ))}
         </Pie>
         <Tooltip content={<CustomTooltip />} />
-        <Legend content={<CustomLegend />} />   
+        <Legend content={<CustomLegend />} /> 
       </PieChart>
     </ResponsiveContainer>
   )
