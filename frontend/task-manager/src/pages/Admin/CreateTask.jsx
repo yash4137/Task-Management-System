@@ -9,6 +9,7 @@ import moment from 'moment';
 import { LuTrash2 } from 'react-icons/lu';
 import SelectDropdown from '../../components/Inputs/SelectDropdown';
 import SelectUsers from '../../components/Inputs/SelectUsers';
+import TodoListInput from '../../components/Inputs/TodoListInput';
 
 const CreateTask = () => {
 
@@ -152,12 +153,23 @@ const CreateTask = () => {
                   </label>
 
                   <SelectUsers
-                    SelectUsers={taskData.assignedTo}
+                    selectedUsers={taskData.assignedTo}
                     setSelectedUsers={(value) => {
                       handleValueChange("assignedTo",value);
                     }}
                   />
                 </div>
+            </div>
+
+            <div className='mt-3'>
+              <label className='text-xs font-medium text-slate-600'>
+                TODO Checklist
+              </label>
+
+              <TodoListInput
+                todoList={taskData?.todoChecklist}
+                setTodoList={(value) => handleValueChange("todoChecklist", value)}
+              />
             </div>
           </div>
         </div>
