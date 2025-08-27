@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const TaskStatusTabs = ({tabs,activeTab,setActiveTab}) => {
   return (
@@ -25,7 +25,7 @@ const TaskStatusTabs = ({tabs,activeTab,setActiveTab}) => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TaskStatusTabs
+export default TaskStatusTabs;

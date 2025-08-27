@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
@@ -30,7 +30,7 @@ const ManageTasks = () => {
       const statusSummary = response.data?.statusSummary || {};
 
       const statusArray = [
-        {label: "All", count:statusSummary.all || 0},
+        {label: "All", count: statusSummary.all || 0},
         {label: "Pending", count: statusSummary.pendingTasks || 0},
         {label: "In Progress", count: statusSummary.inProgressTasks || 0},
         {label: "Completed", count: statusSummary.completedTasks || 0},
@@ -55,10 +55,11 @@ const ManageTasks = () => {
     getAllTasks(filterStatus);
     return () => {};
   }, [filterStatus]);
+
   return (
     <DashboardLayout activeMenu="Manage Tasks">
       <div className='my-5'>
-        <div className='flex flex-col lg:flex-row  md:items-center justify-between'>
+        <div className='flex flex-col lg:flex-row  lg:items-center justify-between'>
           <div className='flex items-center justify-between gap-3'>
             <h2 className='text-xl md:text-xl font-medium'>My Tasks</h2>
 
@@ -79,9 +80,9 @@ const ManageTasks = () => {
                 setActiveTab={setFilterStatus}
               />
 
-              <button className='hidden lg:flex dowload-btn' onClick={handleDownloadReport}>
+              <button className='hidden lg:flex download-btn' onClick={handleDownloadReport}>
                 <LuFileSpreadsheet className='text-lg' />
-                Dowload Report
+                Download Report
               </button>
             </div>
           )}
@@ -98,19 +99,19 @@ const ManageTasks = () => {
               progress={item.progress}
               createdAt={item.createdAt}
               dueDate={item.dueDate}
-              assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)}
-              // assignedTo={
-              //   Array.isArray(item.assignedTo)
-              //   ? item.assignedTo.map((user) => user.profileImageUrl) : item.assignedTo
-              //   ? [item.assignedTo.profileImageUrl]
-              //   : []
-              // }
+              // assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)}
+              assignedTo={
+                Array.isArray(item.assignedTo)
+                ? item.assignedTo.map((user) => user.profileImageUrl) : item.assignedTo
+                ? [item.assignedTo.profileImageUrl]
+                : []
+              }
               attachmentCount={item.attachments?.length || 0}
               completedTodoCount={item.completedTodoCount || 0}
               todoChecklist={item.todoChecklist || []}
               onClick={() => {
                 handleClick(item);
-              }}
+              }} 
             />
           ))}
         </div>
