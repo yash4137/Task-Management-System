@@ -31,7 +31,9 @@ const ManageTasks = () => {
 
       const statusArray = [
         {label: "All", count: statusSummary.all || 0},
-        {label: "Pending", count: statusSummary.pendingTasks || 0},
+        // {label: "Pending", count: statusSummary.pendingTasks || 0},
+        {label: "Pending", count: statusSummary.Pending || statusSummary.pendingTasks || 
+        allTasks.filter(t => (t.status || "").toLowerCase() === "pending").length },
         {label: "In Progress", count: statusSummary.inProgressTasks || 0},
         {label: "Completed", count: statusSummary.completedTasks || 0},
       ];

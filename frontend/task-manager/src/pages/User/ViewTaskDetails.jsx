@@ -6,4 +6,4 @@ const ViewTaskDetails = () => {
   )
 }
 
-export default ViewTaskDetails
+export default ViewTaskDetails;

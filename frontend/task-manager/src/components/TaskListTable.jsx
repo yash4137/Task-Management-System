@@ -28,7 +28,7 @@ const TaskListTable = ({tableData}) => {
             <th className='py-3 px-4 text-gray-800 font-medium text-[13px]'>Name</th>
             <th className='py-3 px-4 text-gray-800 font-medium text-[13px]'>Status</th>
             <th className='py-3 px-4 text-gray-800 font-medium text-[13px]'>Priority</th>
-            <th className='py-3 px-4 text-gray-800 font-medium text-[13px] hidden md:table-cell'>Create On</th>
+            <th className='py-3 px-4 text-gray-800 font-medium text-[13px] hidden md:table-cell'>Due Date</th>
           </tr>
         </thead>
         <tbody>
