@@ -11,6 +11,8 @@ import SelectDropdown from '../../components/Inputs/SelectDropdown';
 import SelectUsers from '../../components/Inputs/SelectUsers';
 import TodoListInput from '../../components/Inputs/TodoListInput';
 import AddAttachmentsInput from '../../components/Inputs/AddAttachmentsInput';
+import Modal from '../../components/Modal';
+import DeleteAlert from '../../components/DeleteAlert';
 
 const CreateTask = () => {
 
@@ -81,7 +83,37 @@ const CreateTask = () => {
   };
 
   //Update Task
-  const updateTask = async () => {};
+  const updateTask = async () => {
+    setLoading(true);
+
+    try{
+      const todolist = taskData.todoChecklist?.map((item) => {
+        const prevTodoChecklist = currentTask?.todoChecklist || [];
+        const matchedTask = prevTodoChecklist.find((task) => task.text == item);
+
+        return {
+          text: item,
+          completed: matchedTask ? matchedTask.completed : false,
+        };
+      });
+
+      const response = await axiosInstance.put(
+        API_PATHS.TASKS.UPDATE_TASK(taskId),
+        {
+          ...taskData,
+          dueDate: new Date(taskData.dueDate).toISOString(),
+          todoChecklist: todolist,
+        }
+      );
+
+      toast.success("Task Updated Successfully");
+    }catch(error){
+      console.error("Error Creating task:",error);
+      setLoading(false);
+    }finally{
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async () => {
     setError(null);
@@ -149,7 +181,20 @@ const CreateTask = () => {
   };
 
   //Delete Task
-  const deleteTask = async () => {};
+  const deleteTask = async () => {
+    try{
+      await axiosInstance.delete(API_PATHS.TASKS.DELETE_TASK(taskId));
+
+      setOpenDeleteAlert(false);
+      toast.success("Task Deleted Successfully");
+      navigate('/admin/tasks');
+    }catch(error){
+      console.error(
+        "Error deleting expense:",
+        error.response?.data?.message || error.message
+      );
+    }
+  };
 
   useEffect(() => {
     if(taskId){
@@ -189,7 +234,7 @@ const CreateTask = () => {
               <input
                 placeholder='Create App UI'
                 className='form-input'
-                value={taskData.title}
+                value={taskData.title || ""}
                 onChange={({target}) => 
                   handleValueChange("title", target.value)
                 }
@@ -205,7 +250,7 @@ const CreateTask = () => {
                 placeholder='Describe task'
                 className='form-input'
                 rows={4}
-                value={taskData.description}
+                value={taskData.description || ""}
                 onChange={({target}) => 
                   handleValueChange("description", target.value)
                 }
@@ -234,7 +279,7 @@ const CreateTask = () => {
                   <input
                     placeholder='Create App UI'
                     className='form-input'
-                    value={taskData.dueDate}
+                    value={taskData.dueDate || ""}
                     onChange={({target}) => 
                       handleValueChange("dueDate", target.value)
                     }
@@ -296,6 +341,17 @@ const CreateTask = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={openDeleteAlert}
+        onClose={() => setOpenDeleteAlert(false)}
+        title="Delete Task"
+      >
+        <DeleteAlert
+          content="Are you sure you want to delete this task?"
+          onDelete={() => deleteTask()}
+        />
+      </Modal>
     </DashboardLayout>
   )
 }
