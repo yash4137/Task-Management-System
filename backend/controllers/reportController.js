@@ -46,8 +46,8 @@ const exportTasksReport = async (req, res) => {
 
 const exportUsersReport = async(req,res) => {
   try {
-    const users = await User.find().select("name email_id").lean();
-    const userTasks = await Task.find().populate("assignedTo", "name email_id");
+    const users = await User.find().select("name email").lean();
+    const userTasks = await Task.find().populate("assignedTo", "name email");
 
     const userTaskMap = {};
     users.forEach((user) => {
@@ -102,7 +102,8 @@ const exportUsersReport = async(req,res) => {
       res.end();
     });
   }catch(error){
-    res.status(500).json({ message: "Error exporting tasks", error: error.message });
+    res.status(500).json({ message: "Error exporting users report", error: error.message });
+
   }
 };
 
