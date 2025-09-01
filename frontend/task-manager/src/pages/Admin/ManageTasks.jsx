@@ -24,6 +24,9 @@ const ManageTasks = () => {
           status: filterStatus === "All" ? "": filterStatus,
         },
       });
+      
+      const tasks = response.data?.tasks || [];
+      setAllTasks(tasks);
 
       setAllTasks(response.data?.tasks?.length > 0 ? response.data.tasks : []);
 
@@ -32,11 +35,11 @@ const ManageTasks = () => {
       const statusArray = [
         {label: "All", count: statusSummary.all || 0},
         // {label: "Pending", count: statusSummary.pendingTasks || 0},
-        {label: "Pending", count: statusSummary.Pending || statusSummary.pendingTasks || 
-        allTasks.filter(t => (t.status || "").toLowerCase() === "pending").length },
+        {label: "Pending", count: statusSummary.Pending || statusSummary.pendingTasks || tasks.filter(t => (t.status || "").toLowerCase() === "pending").length},
         {label: "In Progress", count: statusSummary.inProgressTasks || 0},
         {label: "Completed", count: statusSummary.completedTasks || 0},
       ];
+
 
       setTabs(statusArray);
     }catch(error){
@@ -50,7 +53,22 @@ const ManageTasks = () => {
 
   //dowload task report
   const handleDownloadReport = async () => {
+    try{
+      const response = await axiosInstance.get(API_PATHS.REPORTS.EXPORT_TASKS, { responseType: 'blob' });
 
+      //create a URL for the blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute("download","task_details.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch(error){
+      console.error("Error downloading report:", error);
+      toast.error("Failed to download report. Please try again later.");
+    }
   };
 
   useEffect(() => {
@@ -63,7 +81,7 @@ const ManageTasks = () => {
       <div className='my-5'>
         <div className='flex flex-col lg:flex-row  lg:items-center justify-between'>
           <div className='flex items-center justify-between gap-3'>
-            <h2 className='text-xl md:text-xl font-medium'>My Tasks</h2>
+            <h2 className='text-xl md:text-xl font-medium'>Manage Tasks</h2>
 
             <button
               className='flex lg:hidden download-btn'
@@ -101,13 +119,13 @@ const ManageTasks = () => {
               progress={item.progress}
               createdAt={item.createdAt}
               dueDate={item.dueDate}
-              // assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)}
-              assignedTo={
-                Array.isArray(item.assignedTo)
-                ? item.assignedTo.map((user) => user.profileImageUrl) : item.assignedTo
-                ? [item.assignedTo.profileImageUrl]
-                : []
-              }
+              assignedTo={item.assignedTo?.map((item) => item.profileImageUrl)}
+              // assignedTo={
+              //   Array.isArray(item.assignedTo)
+              //   ? item.assignedTo.map((user) => user.profileImageUrl) : item.assignedTo
+              //   ? [item.assignedTo.profileImageUrl]
+              //   : []
+              // }
               attachmentCount={item.attachments?.length || 0}
               completedTodoCount={item.completedTodoCount || 0}
               todoChecklist={item.todoChecklist || []}
