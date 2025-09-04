@@ -1,6 +1,42 @@
+const moment = require("moment");
 const Task = require("../models/Task");
 const User = require("../models/User");
 const excelJS = require("exceljs");
+
+// Get Upcoming Deadlines summary
+const getUpcomingDeadlines = async (req, res) => {
+  try {
+    const today = moment().startOf("day");
+    const endOfToday = moment().endOf("day");
+    const endOfWeek = moment().endOf("week");
+    const endOfNextWeek = moment().add(1, "weeks").endOf("week");
+
+    const todayCount = await Task.countDocuments({
+      dueDate: { $gte: today.toDate(), $lte: endOfToday.toDate() },
+    });
+
+    const thisWeekCount = await Task.countDocuments({
+      dueDate: { $gt: endOfToday.toDate(), $lte: endOfWeek.toDate() },
+    });
+
+    const nextWeekCount = await Task.countDocuments({
+      dueDate: { $gt: endOfWeek.toDate(), $lte: endOfNextWeek.toDate() },
+    });
+
+    const laterCount = await Task.countDocuments({
+      dueDate: { $gt: endOfNextWeek.toDate() },
+    });
+
+    res.json({
+      today: todayCount,
+      thisWeek: thisWeekCount,
+      nextWeek: nextWeekCount,
+      later: laterCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching upcoming deadlines", error: error.message });
+  }
+};
 
 //Export all tasks as Excel/PDF
 //This function retrieves all tasks from the database, formats them into an Excel sheet, and sends it as a downloadable file.
@@ -110,4 +146,5 @@ const exportUsersReport = async(req,res) => {
 module.exports = {
   exportTasksReport,
   exportUsersReport,
+  getUpcomingDeadlines,
 };

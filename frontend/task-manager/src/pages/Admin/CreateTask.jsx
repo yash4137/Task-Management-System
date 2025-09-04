@@ -284,6 +284,7 @@ const CreateTask = () => {
                       handleValueChange("dueDate", target.value)
                     }
                     type='date'
+                    min={new Date().toISOString().split("T")[0]}    //past due disable
                   />
                 </div>
 
