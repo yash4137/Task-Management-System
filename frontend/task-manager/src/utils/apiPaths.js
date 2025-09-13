@@ -28,7 +28,8 @@ export const API_PATHS = {
   REPORTS: {
     EXPORT_TASKS: "/api/reports/export/tasks",
     EXPORT_USERS: "/api/reports/export/users",
-    UPCOMING_DEADLINES: "/api/reports/upcoming-deadlines",
+    UPCOMING_DEADLINES_ADMIN: "/api/reports/upcoming-deadlines/admin",
+    UPCOMING_DEADLINES_USER: "/api/reports/upcoming-deadlines",
   },
 
   IMAGE:{

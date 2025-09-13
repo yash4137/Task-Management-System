@@ -13,6 +13,7 @@ import { LuArrowRight } from 'react-icons/lu';
 import TaskListTable from '../../components/TaskListTable';
 import CustomPieChart from '../../components/Charts/CustomPieChart';
 import CustomBarChart from '../../components/Charts/CustomBarChart';
+import UpcomingDeadlinesChart from '../../components/Charts/UpcomingDeadlinesChart';
 
 const COLORS = ["#8D51FF","#00BBDB","#7BCE00"]
 
@@ -26,11 +27,13 @@ const UserDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [pieChartData, setPieChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
-
+  const [deadlinesChartData, setDeadlinesChartData] = useState([]);
+  
   //prepare chart data
   const prepareChartData = (data) => {
     const taskDistribution = data?.taskDistribution || null;
-    const taskPriorityLevels = data?.taskPriorityLevels || null;
+    // const taskPriorityLevels = data?.taskPriorityLevels || null;
+    const upcomingDeadlines = data?.upcomingDeadlines || null;
 
     const taskDistributionData = [
       {status: "Pending", count: taskDistribution?.Pending || 0},
@@ -40,13 +43,13 @@ const UserDashboard = () => {
 
     setPieChartData(taskDistributionData);
 
-    const PriorityLevelData = [
-      {priority: "Low", count: taskPriorityLevels?.Low || 0},
-      {priority: "Medium", count: taskPriorityLevels?.Medium || 0},
-      {priority: "High", count: taskPriorityLevels?.High || 0},
+    const deadlinesData = [
+      { bucket: "Today", count: upcomingDeadlines?.today || 0 },
+      { bucket: "This Week", count: upcomingDeadlines?.thisWeek || 0 },
+      { bucket: "Next Week", count: upcomingDeadlines?.nextWeek || 0 },
+      { bucket: "Later", count: upcomingDeadlines?.later || 0 },
     ];
-
-    setBarChartData(PriorityLevelData);
+    setDeadlinesChartData(deadlinesData);
   };
 
   const getDashboardData = async () => {
@@ -57,6 +60,18 @@ const UserDashboard = () => {
       if(response.data){
         setDashboardData(response.data);
         prepareChartData(response.data?.charts || null)
+      }
+
+      // fetch upcoming deadlines (AFTER dashboard call)
+      const deadlinesRes = await axiosInstance.get(API_PATHS.REPORTS.UPCOMING_DEADLINES_USER);
+      if (deadlinesRes?.data) {
+        const dl = deadlinesRes.data;
+        setDeadlinesChartData([
+          { bucket: "Today", count: dl.today ?? 0 },
+          { bucket: "This Week", count: dl.thisWeek ?? 0 },
+          { bucket: "Next Week", count: dl.nextWeek ?? 0 },
+          { bucket: "Later", count: dl.later ?? 0 },
+        ]);
       }
     } catch(error) {
       console.log("Error fetching users:", error);
@@ -132,11 +147,10 @@ const UserDashboard = () => {
 
         <div>
           <div className='card'>
-            <div className='flex items-center justify-between'>
-              <h5 className='font-medium'>Task Priority Levels</h5>
-            </div>
-
-            <CustomBarChart data={barChartData} />
+              <div className='flex items-center justify-between'>
+                <h5 className='font-medium'>Upcoming Deadlines</h5>
+              </div>
+              <UpcomingDeadlinesChart data={deadlinesChartData} />
           </div>
         </div>
         

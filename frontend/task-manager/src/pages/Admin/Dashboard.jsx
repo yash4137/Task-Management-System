@@ -27,8 +27,7 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [pieChartData, setPieChartData] = useState([]);
   const [barChartData, setBarChartData] = useState([]);
-
-    const [deadlinesChartData, setDeadlinesChartData] = useState([]);
+  const [deadlinesChartData, setDeadlinesChartData] = useState([]);
 
   //prepare chart data
   const prepareChartData = (data) => {
@@ -43,14 +42,6 @@ const Dashboard = () => {
     ];
 
     setPieChartData(taskDistributionData);
-
-    // const PriorityLevelData = [
-    //   {priority: "Low", count: taskPriorityLevels?.Low || 0},
-    //   // {priority: "Medium", count: taskPriorityLevels?.Medium || 0},
-    //   {priority: "High", count: taskPriorityLevels?.High || 0},
-    // ];
-
-    // setBarChartData(PriorityLevelData);
 
     const deadlinesData = [
       { bucket: "Today", count: upcomingDeadlines?.today || 0 },
@@ -72,7 +63,7 @@ const Dashboard = () => {
       }
 
       // fetch upcoming deadlines (AFTER dashboard call)
-      const deadlinesRes = await axiosInstance.get(API_PATHS.REPORTS.UPCOMING_DEADLINES);
+      const deadlinesRes = await axiosInstance.get(API_PATHS.REPORTS.UPCOMING_DEADLINES_ADMIN);
       if (deadlinesRes?.data) {
         const dl = deadlinesRes.data;
         setDeadlinesChartData([
@@ -155,20 +146,11 @@ const Dashboard = () => {
         </div>
 
         <div>
-          {/* <div className='card'>
-            <div className='flex items-center justify-between'>
-              <h5 className='font-medium'>Task Priority Levels</h5>
-            </div>
-
-            <CustomBarChart data={barChartData} />
-          </div> */}
             <div className='card'>
               <div className='flex items-center justify-between'>
                 <h5 className='font-medium'>Upcoming Deadlines</h5>
               </div>
-
               <UpcomingDeadlinesChart data={deadlinesChartData} />
-
             </div>
 
         </div>

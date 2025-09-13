@@ -6,24 +6,34 @@ const excelJS = require("exceljs");
 // Get Upcoming Deadlines summary
 const getUpcomingDeadlines = async (req, res) => {
   try {
+    const baseFilter = {};
+    if (req.user && req.user.role === "member") {
+      baseFilter.assignedTo = req.user._id;
+    }
+
     const today = moment().startOf("day");
     const endOfToday = moment().endOf("day");
     const endOfWeek = moment().endOf("week");
     const endOfNextWeek = moment().add(1, "weeks").endOf("week");
 
+    // Apply baseFilter to each count query so counts respect the user (if member).
     const todayCount = await Task.countDocuments({
+      ...baseFilter,
       dueDate: { $gte: today.toDate(), $lte: endOfToday.toDate() },
     });
 
     const thisWeekCount = await Task.countDocuments({
+      ...baseFilter,
       dueDate: { $gt: endOfToday.toDate(), $lte: endOfWeek.toDate() },
     });
 
     const nextWeekCount = await Task.countDocuments({
+      ...baseFilter,
       dueDate: { $gt: endOfWeek.toDate(), $lte: endOfNextWeek.toDate() },
     });
 
     const laterCount = await Task.countDocuments({
+      ...baseFilter,
       dueDate: { $gt: endOfNextWeek.toDate() },
     });
 
@@ -37,6 +47,7 @@ const getUpcomingDeadlines = async (req, res) => {
     res.status(500).json({ message: "Error fetching upcoming deadlines", error: error.message });
   }
 };
+
 
 //Export all tasks as Excel/PDF
 //This function retrieves all tasks from the database, formats them into an Excel sheet, and sends it as a downloadable file.
