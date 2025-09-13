@@ -55,66 +55,68 @@ const CreateTask = () => {
     });
   };
 
-  //create Task
-  const CreateTask = async () => {
-    setLoading(true);
+  // Create Task
+const CreateTask = async () => {
+  setLoading(true);
 
-    try{
-      const todolist = taskData.todoChecklist?.map((item) => ({
-        text: item,
-        completed: false,
-      }));
+  try {
+    const todolist = taskData.todoChecklist?.map((item) => ({
+      text: item.text,
+      completed: item.completed || false,
+      assignedTo: item.assignedTo || [],
+    }));
 
-      const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
+    const response = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, {
+      ...taskData,
+      dueDate: new Date(taskData.dueDate).toISOString(),
+      todoChecklist: todolist,
+    });
+
+    toast.success("Task Created Successfully");
+    clearData();
+  } catch (error) {
+    console.error("Error creating task:", error);
+    setLoading(false);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Update Task
+const updateTask = async () => {
+  setLoading(true);
+
+  try {
+    const todolist = taskData.todoChecklist?.map((item) => {
+      const prevTodoChecklist = currentTask?.todoChecklist || [];
+      const matchedTask = prevTodoChecklist.find((task) => task.text === item.text);
+
+      return {
+        text: item.text,
+        completed: matchedTask ? matchedTask.completed : false,
+        assignedTo: item.assignedTo || [],
+      };
+    });
+
+    const response = await axiosInstance.put(
+      API_PATHS.TASKS.UPDATE_TASK(taskId),
+      {
         ...taskData,
         dueDate: new Date(taskData.dueDate).toISOString(),
         todoChecklist: todolist,
-      });
+      }
+    );
 
-      toast.success("Task Created Successfully");
+    toast.success("Task Updated Successfully");
+  } catch (error) {
+    console.error("Error Updating task:", error);
+    setLoading(false);
+  } finally {
+    setLoading(false);
+  }
+};
 
-      clearData();
-    } catch(error){
-      console.error("Error creating task:",error);
-      setLoading(false);
-    }finally{
-      setLoading(false);
-    }
-  };
-
-  //Update Task
-  const updateTask = async () => {
-    setLoading(true);
-
-    try{
-      const todolist = taskData.todoChecklist?.map((item) => {
-        const prevTodoChecklist = currentTask?.todoChecklist || [];
-        const matchedTask = prevTodoChecklist.find((task) => task.text == item);
-
-        return {
-          text: item,
-          completed: matchedTask ? matchedTask.completed : false,
-        };
-      });
-
-      const response = await axiosInstance.put(
-        API_PATHS.TASKS.UPDATE_TASK(taskId),
-        {
-          ...taskData,
-          dueDate: new Date(taskData.dueDate).toISOString(),
-          todoChecklist: todolist,
-        }
-      );
-
-      toast.success("Task Updated Successfully");
-    }catch(error){
-      console.error("Error Creating task:",error);
-      setLoading(false);
-    }finally{
-      setLoading(false);
-    }
-  };
-
+  //handle form submit
   const handleSubmit = async () => {
     setError(null);
 
@@ -310,6 +312,7 @@ const CreateTask = () => {
               <TodoListInput
                 todoList={taskData?.todoChecklist}
                 setTodoList={(value) => handleValueChange("todoChecklist", value)}
+                assignedUsers={taskData?.assignedTo}
               />
             </div>
 

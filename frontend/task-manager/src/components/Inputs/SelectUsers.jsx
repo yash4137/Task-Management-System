@@ -5,7 +5,7 @@ import { LuUsers } from "react-icons/lu";
 import Modal from '../Modal';
 import AvatarGroup from '../AvatarGroup';
 
-const SelectUsers = ({selectedUsers,setSelectedUsers}) => {
+const SelectUsers = ({selectedUsers,setSelectedUsers,allowedUsers = []}) => {
   const [allUsers, setAllUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tempSelectedUsers, setTempSelectedUsers] = useState([]);
@@ -20,6 +20,11 @@ const SelectUsers = ({selectedUsers,setSelectedUsers}) => {
       console.error("Error fetching users:", error);
     }
   };
+
+  const filteredUsers = allowedUsers.length > 0
+    ? allUsers.filter((user) => allowedUsers.includes(user._id))
+    : allUsers;
+
 
   const toggleUserSelection = (userId) => {
     setTempSelectedUsers((prev) =>
@@ -71,7 +76,7 @@ const SelectUsers = ({selectedUsers,setSelectedUsers}) => {
         title="Select Users"
       >
         <div className='space-y-4 h-[60vh] overflow-y-auto'>
-          {allUsers.map((user) => (
+          {filteredUsers.map((user) => (
             <div
               key={user._id}
               className='flex items-center gap-4 p-3 border-b border-gray-200'
