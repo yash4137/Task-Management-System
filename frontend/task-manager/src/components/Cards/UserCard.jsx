@@ -1,14 +1,16 @@
 import React from 'react';
 
-const UserCard = ({userInfo}) => {
-  
+const UserCard = ({ userInfo, onClick }) => {
   return (
-    <div className='user-card p-2'>
+    <div
+      className='user-card p-2 border rounded-lg shadow-sm cursor-pointer hover:shadow-md transition'
+      onClick={() => onClick(userInfo)} 
+    >
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <img 
             src={userInfo?.profileImageUrl}
-            alt={`Avatar`}
+            alt="Avatar"
             className='w-12 h-12 rounded-full border-2 border-white'
           />
 
@@ -42,16 +44,13 @@ const UserCard = ({userInfo}) => {
 
 export default UserCard;
 
-const StatCard = ({label, count, status}) => {
-
+const StatCard = ({ label, count, status }) => {
   const getStatusTagColor = () => {
-    switch(status) {
+    switch (status) {
       case "In Progress":
         return "text-cyan-500 bg-gray-50";
-
       case "Completed":
         return "text-indigo-500 bg-gray-50";
-
       default:
         return "text-violet-500 bg-gray-50";
     }
@@ -65,3 +64,4 @@ const StatCard = ({label, count, status}) => {
     </div>
   );
 };
+

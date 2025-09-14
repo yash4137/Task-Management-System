@@ -31,10 +31,11 @@ const TodoListInput = ({ todoList, setTodoList, assignedUsers = [] }) => {
 
   // Update assigned users of checklist item
   const handleAssignChange = (index, users) => {
-    const updatedArr = [...todoList];
-    updatedArr[index].assignedTo = users;
-    setTodoList(updatedArr);
-  };
+  const updatedArr = [...todoList];
+  updatedArr[index].assignedTo = users;
+  setTodoList(updatedArr);
+};
+
 
   return (
     <div>
