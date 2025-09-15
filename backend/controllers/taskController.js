@@ -231,7 +231,20 @@ const updateTaskChecklist = async (req, res) => {
 
     if (!task) return res.status(404).json({ message: "Task not found" });
 
-    if (!task.assignedTo.equals(req.user._id) && req.user.role !== "admin") {
+    const userIdStr = String(req.user._id);
+    let isAssigned = false;
+
+    if (Array.isArray(task.assignedTo)) {
+      isAssigned = task.assignedTo.some((user) => {
+        const id = user._id ? user._id : user; 
+        return String(id) === userIdStr;
+      });
+    } else if (task.assignedTo) {
+      const id = task.assignedTo._id ? task.assignedTo._id : task.assignedTo;
+      isAssigned = String(id) === userIdStr;
+    }
+
+    if (!isAssigned && req.user.role !== "admin") {
       return res.status(403).json({ message: "Not authorized to update checklist" });
     }
 
@@ -250,10 +263,12 @@ const updateTaskChecklist = async (req, res) => {
     }
 
     await task.save();
-    const updatedTask = await Task.findById(req.params.id).populate("assignedTo", "name email profileImageUrl");
+    const updatedTask = await Task.findById(req.params.id)
+      .populate("assignedTo", "name email profileImageUrl");
 
     res.json({ message: "Task checklist updated", task: updatedTask });
   } catch (error) {
+    console.error("Error in updateTaskChecklist:", error); 
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
