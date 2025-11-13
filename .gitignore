@@ -5,6 +5,7 @@ backend/.env.local
 
 # Frontend
 frontend/node_modules/
+frontend/task-manager/dist/
 frontend/task-manager/node_modules/
 frontend/task-manager/.env
 frontend/.env.local
